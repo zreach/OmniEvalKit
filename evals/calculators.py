@@ -2,7 +2,11 @@ import string
 import numpy as np
 from collections import defaultdict
 from itertools import chain
-from utils import flatten_list, logger
+from utils import flatten_list, logger, CODE_WARNING
+import os
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from collections import Counter, defaultdict
+from metrics.code_metric import check_correctness, estimate_pass_at_k
 
 def one_hot_encode(item, length, topk=1):
     if isinstance(item, int):
@@ -97,6 +101,55 @@ class BaseCalculator:
             raise NotImplementedError(f'Unhandled gold type: {type(gold)}')
         return {'acc': acc}
 
+    @staticmethod
+    def code_eval(filtered_r, is_filtered, gold, **kwargs):
+        predictions = filtered_r
+        references = gold['references']
+        num_workers = kwargs.get('num_workers',4)
+        timeout = kwargs.get('timeout', 3.0)  # seconds
+        k = kwargs.get('k', [1, 10, 100])  
+
+        if os.getenv("HF_ALLOW_CODE_EVAL", 0) != "1":
+            raise ValueError(CODE_WARNING)
+
+        if os.name == "nt":
+            raise NotImplementedError("This metric is currently not supported on Windows.")
+
+        with ThreadPoolExecutor(max_workers=num_workers) as executor:
+            futures = []
+            completion_id = Counter()
+            n_samples = 0
+            results = defaultdict(list)
+
+            for task_id, (candidates, test_case) in enumerate(zip(predictions, references)):
+                # import pdb;pdb.set_trace()
+                for candidate in candidates:
+                    test_program = candidate + "\n" + test_case
+                    args = (test_program, timeout, task_id, completion_id[task_id])
+                    future = executor.submit(check_correctness, *args)
+                    futures.append(future)
+                    completion_id[task_id] += 1
+                    n_samples += 1
+
+            for future in as_completed(futures):
+                result = future.result()
+                results[result["task_id"]].append((result["completion_id"], result))
+
+        total, correct = [], []
+        for result in results.values():
+            result.sort()
+            passed = [r[1]["passed"] for r in result]
+            total.append(len(passed))
+            correct.append(sum(passed))
+        total = np.array(total)
+        correct = np.array(correct)
+
+        ks = k
+        if not isinstance(ks, (list, tuple)):
+            ks = [ks]
+        pass_at_k = {f"pass@{k}": estimate_pass_at_k(total, correct, k).mean() for k in ks if (total >= k).all()}
+
+        return pass_at_k, results
     @staticmethod
     def loglikelihood(filtered_r, is_filtered, gold, choices_length, prompt_choices, **kwargs):
         if not is_filtered:

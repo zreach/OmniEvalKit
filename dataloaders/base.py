@@ -61,7 +61,7 @@ class Dataset(object):
         if 'hint' in sample.keys() and sample['hint'] is not None:
             sample['prompt_instruction'] = f"{translate_prompt('Hint: ', language)}{sample['hint']}\n" + sample['prompt_instruction']
         return sample
-
+    
     def calculate(self, data, filtered_response, is_filtered, question_type, request_type, calculate_type):
         question_type = opt_or_base_type(question_type, data.get('question_type', 'open'))
         request_type = opt_or_base_type(request_type, data.get('request_type', 'open'))
@@ -93,6 +93,10 @@ class Dataset(object):
 
         elif question_type == 'yes_or_no':
             metric2score = getattr(self.calculator, opt_or_base_type(calculate_type, 'multiple_choice'))(**base_calculate_kwargs)
+        
+        elif question_type == 'native':
+            code_calculate_kwargs = self.base2code_kwargs(base_calculate_kwargs)
+            metric2score = getattr(self.calculator, opt_or_base_type(calculate_type, 'code_eval'))(**code_calculate_kwargs) # TODO: 这里还要传入k, num_workers, timeout 参数，确认一下哪里传比较好
         else:
             raise NotImplementedError(f'Unknown question_type: {question_type}')
 
@@ -100,5 +104,7 @@ class Dataset(object):
 
     def estimate(self, scores, categories, sub_categories):
         return self.estimator.sum_or_avg(scores, categories=categories, sub_categories=sub_categories, e_type='avg')
-
+    
+    def base2code_kwargs(self, base_kwargs):
+        raise NotImplementedError
 data_core = Dataset
