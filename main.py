@@ -10,7 +10,7 @@ from dataloaders.utils import get_data
 from utils import setup_args, Response, save_json, get_rank_and_world_size, rank_zero_check, calculate_model_flops, batchify, get_log_path, logger
 
 def get_model_dataset_to_inference(model, data, log_path, infer_type, rank, world_size, disable_infer=False):
-    import pdb; pdb.set_trace()
+    # import pdb; pdb.set_trace()
     model_data_not_inferred, model_data_is_inferred = [], []
     for model_name, model_path in model.items():
         for dataset_name, dataset_file_path in tqdm(data.items()):

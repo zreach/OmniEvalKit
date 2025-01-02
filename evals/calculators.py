@@ -103,9 +103,9 @@ class BaseCalculator:
         return {'acc': acc}
 
     @staticmethod
-    def code_eval(filtered_r, is_filtered, gold, **kwargs):
+    def code_eval(filtered_r, is_filtered, references, **kwargs):
         predictions = filtered_r
-        references = gold['references']
+        # references = gold['references']
         num_workers = kwargs.get('num_workers',4)
         timeout = kwargs.get('timeout', 3.0)  # seconds
         k = kwargs.get('k', [1, 10, 100])  

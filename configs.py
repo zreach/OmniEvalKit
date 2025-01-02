@@ -99,7 +99,7 @@ _MODULE2DATASET = {
     'truthfulqa_mc2': ['truthfulqa_mc2', 'truthfulqa_multilingual_mc2'],
     'bbh': ['bbh'],
     'drop': ['drop'],
-    'humaneval': ['humaneval']
+    'humaneval': ['humaneval-prompt']
 }
 
 STANDARD_DATASET2SHOTS = {

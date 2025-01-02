@@ -20,9 +20,6 @@ class InferCodeCenter(InferCenter):
         else:
             pass
     def infer(self, data, device=torch.device('cuda'), **kwargs):
-        return self.infer_coder(data, device, **kwargs)
-
-    def infer_coder(self, data, device=torch.device('cuda'), **kwargs):
         keys_to_extract = ["num_return_sequences", "do_sample", "temperature", "top_p", "top_k", "max_length"]
         gen_kwargs = {key: kwargs[key] for key in keys_to_extract if key in kwargs}
         # import pdb;pdb.set_trace()

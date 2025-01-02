@@ -211,7 +211,7 @@ def setup_args():
     )
     parser.add_argument('--only_do_eval', action='store_true')
     parser.add_argument(
-        "--filter_type", type=str, default="regex", choices=['regex', 'model_based', 'regex,model_based', 'extract_tail']
+        "--filter_type", type=str, default="regex", choices=['regex', 'model_based', 'regex,model_based', 'extract_tail', 'direct']
     )
     parser.add_argument(
         "--filter_args", type=str, default=""
@@ -267,7 +267,7 @@ def setup_args():
         else:
             model_dict[model_path] = os.path.join(MODEL_PATH, model_path)
     args.model = model_dict
-
+    # import pdb; pdb.set_trace()
     if args.filter_model is not None:
         args.filter_model = os.path.join(MODEL_PATH, args.filter_model)
 

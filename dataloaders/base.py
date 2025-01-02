@@ -62,6 +62,8 @@ class Dataset(object):
             sample['prompt_instruction'] = f"{translate_prompt('Hint: ', language)}{sample['hint']}\n" + sample['prompt_instruction']
         return sample
     
+    def overall_calculate(self, data, filtered_response, is_filtered, question_type, request_type, calculate_type):
+        pass
     def calculate(self, data, filtered_response, is_filtered, question_type, request_type, calculate_type):
         question_type = opt_or_base_type(question_type, data.get('question_type', 'open'))
         request_type = opt_or_base_type(request_type, data.get('request_type', 'open'))
@@ -96,6 +98,7 @@ class Dataset(object):
         
         elif question_type == 'native':
             code_calculate_kwargs = self.base2code_kwargs(base_calculate_kwargs)
+            # import pdb; pdb.set_trace()
             metric2score = getattr(self.calculator, opt_or_base_type(calculate_type, 'code_eval'))(**code_calculate_kwargs) # TODO: 这里还要传入k, num_workers, timeout 参数，确认一下哪里传比较好
         else:
             raise NotImplementedError(f'Unknown question_type: {question_type}')

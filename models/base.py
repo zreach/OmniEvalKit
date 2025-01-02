@@ -195,6 +195,7 @@ def get_general_tokenizer(model_path, **kwargs):
     return AutoTokenizer.from_pretrained(model_path, **kwargs)
 
 def get_model(model_name, model_path, model_args, tokenizer_args):
+    # import pdb; pdb.set_trace()
     model_module = MODEL2MODULE.get(model_name, MODEL2MODULE.get(model_name[:model_name.find('__')], None))
 
     if model_module is not None:
