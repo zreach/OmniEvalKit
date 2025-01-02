@@ -16,3 +16,5 @@ class HumanEvalDataset(Dataset):
         code_kwargs = base_kwargs.copy()
         code_kwargs['references'] = self.get_reference(base_kwargs["gold"])
         return code_kwargs
+
+data_core = HumanEvalDataset

@@ -5,7 +5,7 @@ from dataloaders.utils import detect_language, translate_prompt
 from configs import TYPE2LANGUAGE2PROMPT
 from evals.calculators import BaseCalculator
 from evals.estimators import BaseEstimator
-from evals.metrics import EXTRACTMATCH
+from evals.metric import EXTRACTMATCH
 from evals.utils import opt_or_base_type
 
 class Dataset(object):

@@ -98,7 +98,8 @@ _MODULE2DATASET = {
     'mm_cc_bench': ['mmbench', 'ccbench'],
     'truthfulqa_mc2': ['truthfulqa_mc2', 'truthfulqa_multilingual_mc2'],
     'bbh': ['bbh'],
-    'drop': ['drop']
+    'drop': ['drop'],
+    'humaneval': ['humaneval']
 }
 
 STANDARD_DATASET2SHOTS = {

@@ -2,11 +2,12 @@ import string
 import numpy as np
 from collections import defaultdict
 from itertools import chain
-from utils import flatten_list, logger, CODE_WARNING
+from utils import flatten_list, logger
+from evals.utils import CODE_WARNING
 import os
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from collections import Counter, defaultdict
-from metrics.code_metric import check_correctness, estimate_pass_at_k
+from evals.metrics.code_metric import check_correctness, estimate_pass_at_k
 
 def one_hot_encode(item, length, topk=1):
     if isinstance(item, int):
@@ -169,3 +170,4 @@ class BaseCalculator:
             'filtered_r': [prompt_choices[i] for i in pred],
             'filtered_r_norm': [prompt_choices[i] for i in pred_norm]
         }
+
